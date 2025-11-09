@@ -1,225 +1,294 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Simple Food Ordering App</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #fff8f0;
-      margin: 0;
-      padding: 0;
-    }
-    header {
-      background-color: #ff4d4d;
-      color: white;
-      text-align: center;
-      padding: 15px;
-      font-size: 1.5em;
-    }
-    .container {
-      padding: 20px;
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-    }
-    .restaurant {
-      border: 1px solid #ddd;
-      background-color: white;
-      width: 260px;
-      margin: 10px;
-      border-radius: 10px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-      padding: 15px;
-    }
-    .restaurant h3 {
-      margin: 5px 0;
-      color: #ff4d4d;
-    }
-    .menu-item {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin: 6px 0;
-    }
-    .menu-item button {
-      background-color: #ff4d4d;
-      color: white;
-      border: none;
-      padding: 4px 10px;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-    .menu-item button:hover {
-      background-color: #e43f3f;
-    }
-    #cart {
-      background-color: #fff;
-      margin: 20px auto;
-      max-width: 500px;
-      padding: 15px;
-      border-radius: 10px;
-      border: 1px solid #ddd;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    }
-    #cart h2 {
-      color: #333;
-      text-align: center;
-    }
-    #cart-items {
-      margin-top: 10px;
-    }
-    #cart-items p {
-      display: flex;
-      justify-content: space-between;
-      border-bottom: 1px solid #eee;
-      padding: 4px 0;
-    }
-    #cart-items button {
-      background-color: #666;
-      border: none;
-      color: white;
-      border-radius: 4px;
-      padding: 2px 6px;
-      cursor: pointer;
-    }
-    #total {
-      text-align: center;
-      font-weight: bold;
-      margin-top: 10px;
-    }
-    #actions {
-      text-align: center;
-      margin-top: 15px;
-    }
-    #actions button {
-      background-color: #28a745;
-      color: white;
-      border: none;
-      border-radius: 6px;
-      padding: 8px 15px;
-      margin: 5px;
-      cursor: pointer;
-    }
-    #actions button.cancel {
-      background-color: #dc3545;
-    }
-  </style>
-</head>
-<body>
+import React, { useState } from 'react';
+import { ShoppingCart, Plus, Minus, Trash2, Search, Star, Clock, MapPin } from 'lucide-react';
 
-  <header>🍽 Simple Food Ordering Web App</header>
+const FoodOrderingApp = () => {
+  const [cart, setCart] = useState([]);
+  const [showCart, setShowCart] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('All');
+  const [orderPlaced, setOrderPlaced] = useState(false);
 
-  <div class="container" id="restaurant-list"></div>
+  const menuItems = [
+    { id: 1, name: 'Margherita Pizza', price: 12.99, category: 'Pizza', image: '🍕', rating: 4.5, time: '25-30 min', description: 'Fresh mozzarella, tomato sauce, basil' },
+    { id: 2, name: 'Pepperoni Pizza', price: 14.99, category: 'Pizza', image: '🍕', rating: 4.7, time: '25-30 min', description: 'Classic pepperoni with cheese' },
+    { id: 3, name: 'Cheese Burger', price: 10.99, category: 'Burgers', image: '🍔', rating: 4.6, time: '15-20 min', description: 'Beef patty with cheddar cheese' },
+    { id: 4, name: 'Chicken Burger', price: 11.99, category: 'Burgers', image: '🍔', rating: 4.4, time: '15-20 min', description: 'Grilled chicken with lettuce' },
+    { id: 5, name: 'Caesar Salad', price: 8.99, category: 'Salads', image: '🥗', rating: 4.3, time: '10-15 min', description: 'Romaine lettuce, parmesan, croutons' },
+    { id: 6, name: 'Greek Salad', price: 9.99, category: 'Salads', image: '🥗', rating: 4.5, time: '10-15 min', description: 'Feta cheese, olives, tomatoes' },
+    { id: 7, name: 'Pasta Carbonara', price: 13.99, category: 'Pasta', image: '🍝', rating: 4.8, time: '20-25 min', description: 'Creamy pasta with bacon' },
+    { id: 8, name: 'Spaghetti Bolognese', price: 12.99, category: 'Pasta', image: '🍝', rating: 4.6, time: '20-25 min', description: 'Traditional meat sauce pasta' },
+    { id: 9, name: 'Sushi Roll', price: 15.99, category: 'Sushi', image: '🍣', rating: 4.9, time: '15-20 min', description: 'Fresh salmon and avocado' },
+    { id: 10, name: 'Chocolate Cake', price: 6.99, category: 'Desserts', image: '🍰', rating: 4.7, time: '5-10 min', description: 'Rich chocolate layer cake' },
+    { id: 11, name: 'Ice Cream', price: 5.99, category: 'Desserts', image: '🍨', rating: 4.5, time: '5-10 min', description: 'Vanilla and chocolate swirl' },
+    { id: 12, name: 'French Fries', price: 4.99, category: 'Sides', image: '🍟', rating: 4.4, time: '10-15 min', description: 'Crispy golden fries' },
+  ];
 
-  <div id="cart">
-    <h2>🛒 Your Cart</h2>
-    <div id="cart-items"></div>
-    <div id="total">Total: ₹0</div>
-    <div id="actions">
-      <button id="placeOrderBtn">Place Order</button>
-      <button class="cancel" id="cancelOrderBtn">Cancel Order</button>
+  const categories = ['All', 'Pizza', 'Burgers', 'Pasta', 'Salads', 'Sushi', 'Desserts', 'Sides'];
+
+  const addToCart = (item) => {
+    const existingItem = cart.find(cartItem => cartItem.id === item.id);
+    if (existingItem) {
+      setCart(cart.map(cartItem =>
+        cartItem.id === item.id
+          ? { ...cartItem, quantity: cartItem.quantity + 1 }
+          : cartItem
+      ));
+    } else {
+      setCart([...cart, { ...item, quantity: 1 }]);
+    }
+  };
+
+  const updateQuantity = (id, change) => {
+    setCart(cart.map(item =>
+      item.id === id
+        ? { ...item, quantity: Math.max(0, item.quantity + change) }
+        : item
+    ).filter(item => item.quantity > 0));
+  };
+
+  const removeFromCart = (id) => {
+    setCart(cart.filter(item => item.id !== id));
+  };
+
+  const getTotalPrice = () => {
+    return cart.reduce((total, item) => total + (item.price * item.quantity), 0).toFixed(2);
+  };
+
+  const getTotalItems = () => {
+    return cart.reduce((total, item) => total + item.quantity, 0);
+  };
+
+  const placeOrder = () => {
+    if (cart.length > 0) {
+      setOrderPlaced(true);
+      setTimeout(() => {
+        setOrderPlaced(false);
+        setCart([]);
+        setShowCart(false);
+      }, 3000);
+    }
+  };
+
+  const filteredItems = menuItems.filter(item => {
+    const matchesSearch = item.name.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesCategory = selectedCategory === 'All' || item.category === selectedCategory;
+    return matchesSearch && matchesCategory;
+  });
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-orange-50 to-red-50">
+      {/* Header */}
+      <header className="bg-white shadow-md sticky top-0 z-50">
+        <div className="max-w-7xl mx-auto px-4 py-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-2">
+              <div className="text-4xl">🍽️</div>
+              <div>
+                <h1 className="text-2xl font-bold text-orange-600">FoodHub</h1>
+                <p className="text-xs text-gray-500 flex items-center gap-1">
+                  <MapPin size={12} /> Delivering to your location
+                </p>
+              </div>
+            </div>
+            <button
+              onClick={() => setShowCart(!showCart)}
+              className="relative bg-orange-600 text-white px-6 py-3 rounded-full font-semibold hover:bg-orange-700 transition flex items-center gap-2 shadow-lg"
+            >
+              <ShoppingCart size={20} />
+              Cart
+              {getTotalItems() > 0 && (
+                <span className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-7 h-7 flex items-center justify-center text-sm font-bold">
+                  {getTotalItems()}
+                </span>
+              )}
+            </button>
+          </div>
+
+          {/* Search Bar */}
+          <div className="mt-4 relative">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
+            <input
+              type="text"
+              placeholder="Search for food..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-orange-500"
+            />
+          </div>
+        </div>
+      </header>
+
+      {/* Categories */}
+      <div className="bg-white shadow-sm sticky top-24 z-40">
+        <div className="max-w-7xl mx-auto px-4 py-4">
+          <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
+            {categories.map(category => (
+              <button
+                key={category}
+                onClick={() => setSelectedCategory(category)}
+                className={`px-6 py-2 rounded-full whitespace-nowrap font-medium transition ${
+                  selectedCategory === category
+                    ? 'bg-orange-600 text-white'
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                }`}
+              >
+                {category}
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Main Content */}
+      <main className="max-w-7xl mx-auto px-4 py-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          {filteredItems.map(item => (
+            <div key={item.id} className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition transform hover:-translate-y-1">
+              <div className="relative">
+                <div className="text-8xl flex items-center justify-center h-48 bg-gradient-to-br from-orange-100 to-red-100">
+                  {item.image}
+                </div>
+                <div className="absolute top-3 right-3 bg-white px-3 py-1 rounded-full flex items-center gap-1 shadow-md">
+                  <Star size={14} className="text-yellow-500 fill-current" />
+                  <span className="text-sm font-semibold">{item.rating}</span>
+                </div>
+              </div>
+              <div className="p-4">
+                <h3 className="text-xl font-bold text-gray-800 mb-1">{item.name}</h3>
+                <p className="text-sm text-gray-600 mb-2">{item.description}</p>
+                <div className="flex items-center gap-2 text-gray-500 text-sm mb-3">
+                  <Clock size={14} />
+                  <span>{item.time}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-2xl font-bold text-orange-600">${item.price}</span>
+                  <button
+                    onClick={() => addToCart(item)}
+                    className="bg-orange-600 text-white px-4 py-2 rounded-full font-semibold hover:bg-orange-700 transition flex items-center gap-1"
+                  >
+                    <Plus size={18} />
+                    Add
+                  </button>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {filteredItems.length === 0 && (
+          <div className="text-center py-16">
+            <div className="text-6xl mb-4">🔍</div>
+            <p className="text-xl text-gray-600">No items found</p>
+          </div>
+        )}
+      </main>
+
+      {/* Cart Sidebar */}
+      {showCart && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-50" onClick={() => setShowCart(false)}>
+          <div
+            className="absolute right-0 top-0 h-full w-full max-w-md bg-white shadow-2xl overflow-y-auto"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-2xl font-bold text-gray-800">Your Cart</h2>
+                <button
+                  onClick={() => setShowCart(false)}
+                  className="text-gray-500 hover:text-gray-700 text-2xl"
+                >
+                  ×
+                </button>
+              </div>
+
+              {cart.length === 0 ? (
+                <div className="text-center py-16">
+                  <div className="text-6xl mb-4">🛒</div>
+                  <p className="text-xl text-gray-600">Your cart is empty</p>
+                </div>
+              ) : (
+                <>
+                  <div className="space-y-4 mb-6">
+                    {cart.map(item => (
+                      <div key={item.id} className="bg-gray-50 rounded-xl p-4">
+                        <div className="flex items-start justify-between mb-2">
+                          <div className="flex gap-3">
+                            <div className="text-3xl">{item.image}</div>
+                            <div>
+                              <h3 className="font-semibold text-gray-800">{item.name}</h3>
+                              <p className="text-orange-600 font-bold">${item.price}</p>
+                            </div>
+                          </div>
+                          <button
+                            onClick={() => removeFromCart(item.id)}
+                            className="text-red-500 hover:text-red-700"
+                          >
+                            <Trash2 size={20} />
+                          </button>
+                        </div>
+                        <div className="flex items-center gap-3">
+                          <button
+                            onClick={() => updateQuantity(item.id, -1)}
+                            className="bg-gray-200 hover:bg-gray-300 rounded-full p-1"
+                          >
+                            <Minus size={16} />
+                          </button>
+                          <span className="font-semibold text-lg w-8 text-center">{item.quantity}</span>
+                          <button
+                            onClick={() => updateQuantity(item.id, 1)}
+                            className="bg-orange-600 hover:bg-orange-700 text-white rounded-full p-1"
+                          >
+                            <Plus size={16} />
+                          </button>
+                          <span className="ml-auto font-bold text-gray-800">
+                            ${(item.price * item.quantity).toFixed(2)}
+                          </span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className="border-t pt-4 mb-6">
+                    <div className="flex justify-between text-lg mb-2">
+                      <span className="text-gray-600">Subtotal:</span>
+                      <span className="font-semibold">${getTotalPrice()}</span>
+                    </div>
+                    <div className="flex justify-between text-lg mb-2">
+                      <span className="text-gray-600">Delivery Fee:</span>
+                      <span className="font-semibold">$2.99</span>
+                    </div>
+                    <div className="flex justify-between text-xl font-bold text-orange-600 pt-2 border-t">
+                      <span>Total:</span>
+                      <span>${(parseFloat(getTotalPrice()) + 2.99).toFixed(2)}</span>
+                    </div>
+                  </div>
+
+                  <button
+                    onClick={placeOrder}
+                    className="w-full bg-orange-600 text-white py-4 rounded-xl font-bold text-lg hover:bg-orange-700 transition shadow-lg"
+                  >
+                    Place Order
+                  </button>
+                </>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Order Success Modal */}
+      {orderPlaced && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-2xl p-8 max-w-md mx-4 text-center shadow-2xl">
+            <div className="text-6xl mb-4">✅</div>
+            <h2 className="text-3xl font-bold text-green-600 mb-2">Order Placed!</h2>
+            <p className="text-gray-600 text-lg">Your delicious food is on its way!</p>
+            <p className="text-gray-500 mt-2">Estimated delivery: 30-45 minutes</p>
+          </div>
+        </div>
+      )}
     </div>
-  </div>
+  );
+};
 
-  <script>
-    const restaurants = [
-      {
-        name: "🍕 Pizza Palace",
-        menu: [
-          { item: "Margherita Pizza", price: 199 },
-          { item: "Cheese Burst Pizza", price: 249 },
-          { item: "Veg Supreme", price: 299 }
-        ]
-      },
-      {
-        name: "🍔 Burger Hub",
-        menu: [
-          { item: "Veg Burger", price: 99 },
-          { item: "Cheese Burger", price: 129 },
-          { item: "Double Patty Burger", price: 159 }
-        ]
-      },
-      {
-        name: "🍜 Noodles Corner",
-        menu: [
-          { item: "Hakka Noodles", price: 129 },
-          { item: "Schezwan Noodles", price: 149 },
-          { item: "Manchurian", price: 179 }
-        ]
-      }
-    ];
-
-    let cart = [];
-
-    function renderRestaurants() {
-      const container = document.getElementById("restaurant-list");
-      container.innerHTML = "";
-      restaurants.forEach(rest => {
-        const div = document.createElement("div");
-        div.className = "restaurant";
-        div.innerHTML = <h3>${rest.name}</h3>;
-        rest.menu.forEach(food => {
-          const itemDiv = document.createElement("div");
-          itemDiv.className = "menu-item";
-          itemDiv.innerHTML = `
-            <span>${food.item} - ₹${food.price}</span>
-            <button onclick="addToCart('${food.item}', ${food.price})">Add</button>
-          `;
-          div.appendChild(itemDiv);
-        });
-        container.appendChild(div);
-      });
-    }
-
-    function addToCart(item, price) {
-      cart.push({ item, price });
-      updateCart();
-    }
-
-    function removeFromCart(index) {
-      cart.splice(index, 1);
-      updateCart();
-    }
-
-    function updateCart() {
-      const cartDiv = document.getElementById("cart-items");
-      cartDiv.innerHTML = "";
-      let total = 0;
-      cart.forEach((c, i) => {
-        total += c.price;
-        cartDiv.innerHTML += `
-          <p>${c.item} - ₹${c.price} 
-            <button onclick="removeFromCart(${i})">X</button>
-          </p>`;
-      });
-      document.getElementById("total").innerText = Total: ₹${total};
-    }
-
-    document.getElementById("placeOrderBtn").addEventListener("click", () => {
-      if (cart.length === 0) {
-        alert("Your cart is empty!");
-      } else {
-        alert("✅ Order placed successfully!");
-        cart = [];
-        updateCart();
-      }
-    });
-
-    document.getElementById("cancelOrderBtn").addEventListener("click", () => {
-      if (cart.length === 0) {
-        alert("No order to cancel.");
-      } else {
-        if (confirm("Are you sure you want to cancel the order?")) {
-          cart = [];
-          updateCart();
-          alert("❌ Order canceled.");
-        }
-      }
-    });
-
-    renderRestaurants();
-  </script>
-</body>
-</html>
+export default FoodOrderingApp;
