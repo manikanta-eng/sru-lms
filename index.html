@@ -1,758 +1,119 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SRU LMS - Learning Management System</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-        }
-
-        .navbar {
-            background: rgba(255, 255, 255, 0.95);
-            padding: 1rem 5%;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .logo {
-            font-size: 1.8rem;
-            font-weight: bold;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .nav-links {
-            display: flex;
-            gap: 2rem;
-            list-style: none;
-        }
-
-        .nav-links a {
-            color: #333;
-            text-decoration: none;
-            font-weight: 500;
-            transition: color 0.3s;
-            cursor: pointer;
-        }
-
-        .nav-links a:hover {
-            color: #667eea;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 2rem;
-        }
-
-        .page {
-            display: none;
-        }
-
-        .page.active {
-            display: block;
-        }
-
-        .hero {
-            text-align: center;
-            color: white;
-            padding: 3rem 0;
-        }
-
-        .hero h1 {
-            font-size: 3rem;
-            margin-bottom: 1rem;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-        }
-
-        .hero p {
-            font-size: 1.3rem;
-            opacity: 0.9;
-        }
-
-        .dashboard {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 2rem;
-            margin-top: 3rem;
-        }
-
-        .card {
-            background: white;
-            border-radius: 15px;
-            padding: 2rem;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-            transition: transform 0.3s, box-shadow 0.3s;
-            cursor: pointer;
-        }
-
-        .card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
-        }
-
-        .card-icon {
-            width: 60px;
-            height: 60px;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 2rem;
-            margin-bottom: 1rem;
-        }
-
-        .card h3 {
-            color: #333;
-            margin-bottom: 0.5rem;
-            font-size: 1.5rem;
-        }
-
-        .card p {
-            color: #666;
-            line-height: 1.6;
-        }
-
-        .file-upload-section {
-            background: white;
-            border-radius: 15px;
-            padding: 2rem;
-            margin-top: 2rem;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-        }
-
-        .upload-area {
-            border: 3px dashed #667eea;
-            border-radius: 10px;
-            padding: 3rem;
-            text-align: center;
-            transition: all 0.3s;
-            cursor: pointer;
-        }
-
-        .upload-area:hover {
-            background: rgba(102, 126, 234, 0.05);
-            border-color: #764ba2;
-        }
-
-        .upload-area.dragover {
-            background: rgba(102, 126, 234, 0.1);
-            border-color: #764ba2;
-        }
-
-        .file-input {
-            display: none;
-        }
-
-        .file-list {
-            margin-top: 2rem;
-        }
-
-        .file-item {
-            background: #f8f9fa;
-            border-radius: 10px;
-            padding: 1rem;
-            margin-bottom: 1rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            transition: transform 0.2s;
-        }
-
-        .file-item:hover {
-            transform: translateX(5px);
-            background: #e9ecef;
-        }
-
-        .file-info {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            flex: 1;
-        }
-
-        .file-icon {
-            font-size: 2rem;
-        }
-
-        .file-details {
-            flex: 1;
-        }
-
-        .file-name {
-            font-weight: 600;
-            color: #333;
-            margin-bottom: 0.3rem;
-        }
-
-        .file-size {
-            font-size: 0.9rem;
-            color: #666;
-        }
-
-        .file-actions {
-            display: flex;
-            gap: 0.5rem;
-        }
-
-        .btn {
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
-            padding: 0.8rem 2rem;
-            border: none;
-            border-radius: 25px;
-            font-size: 1rem;
-            cursor: pointer;
-            transition: transform 0.3s, box-shadow 0.3s;
-        }
-
-        .btn:hover {
-            transform: scale(1.05);
-            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
-        }
-
-        .btn-small {
-            padding: 0.5rem 1rem;
-            font-size: 0.9rem;
-        }
-
-        .btn-danger {
-            background: linear-gradient(135deg, #f56565, #c53030);
-        }
-
-        .btn-success {
-            background: linear-gradient(135deg, #48bb78, #2f855a);
-        }
-
-        .section-title {
-            color: white;
-            font-size: 2rem;
-            margin-bottom: 2rem;
-        }
-
-        .content-viewer {
-            background: white;
-            border-radius: 15px;
-            padding: 2rem;
-            margin-top: 2rem;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-            max-height: 600px;
-            overflow-y: auto;
-        }
-
-        .viewer-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1rem;
-            padding-bottom: 1rem;
-            border-bottom: 2px solid #e9ecef;
-        }
-
-        .viewer-content {
-            white-space: pre-wrap;
-            font-family: 'Courier New', monospace;
-            line-height: 1.6;
-        }
-
-        .viewer-content img {
-            max-width: 100%;
-            height: auto;
-            border-radius: 10px;
-            margin: 1rem 0;
-        }
-
-        .course-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-            margin-top: 2rem;
-        }
-
-        .course-card {
-            background: white;
-            border-radius: 15px;
-            overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-            transition: transform 0.3s;
-            cursor: pointer;
-        }
-
-        .course-card:hover {
-            transform: translateY(-5px);
-        }
-
-        .course-image {
-            width: 100%;
-            height: 200px;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 3rem;
-        }
-
-        .course-content {
-            padding: 1.5rem;
-        }
-
-        .course-title {
-            font-size: 1.3rem;
-            color: #333;
-            margin-bottom: 0.5rem;
-        }
-
-        .course-meta {
-            display: flex;
-            gap: 1rem;
-            margin-top: 1rem;
-            font-size: 0.9rem;
-            color: #666;
-        }
-
-        .progress-bar {
-            width: 100%;
-            height: 8px;
-            background: #e0e0e0;
-            border-radius: 10px;
-            margin-top: 1rem;
-            overflow: hidden;
-        }
-
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, #667eea, #764ba2);
-            border-radius: 10px;
-            transition: width 0.3s;
-        }
-
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.7);
-            z-index: 1000;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .modal.active {
-            display: flex;
-        }
-
-        .modal-content {
-            background: white;
-            border-radius: 15px;
-            padding: 2rem;
-            max-width: 800px;
-            max-height: 90vh;
-            overflow-y: auto;
-            position: relative;
-            width: 90%;
-        }
-
-        .close-modal {
-            position: absolute;
-            top: 1rem;
-            right: 1rem;
-            font-size: 2rem;
-            cursor: pointer;
-            color: #666;
-            transition: color 0.3s;
-        }
-
-        .close-modal:hover {
-            color: #333;
-        }
-
-        @media (max-width: 768px) {
-            .nav-links {
-                gap: 1rem;
-                font-size: 0.9rem;
-            }
-            
-            .hero h1 {
-                font-size: 2rem;
-            }
-            
-            .hero p {
-                font-size: 1rem;
-            }
-
-            .file-item {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 1rem;
-            }
-        }
-    </style>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Simple Zomato-Like App</title>
+<style>
+:root{--bg:#f7f7fb;--card:#fff;--accent:#ff6b6b;--muted:#666}
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,system-ui,Arial,sans-serif;background:var(--bg);color:#222}
+header{display:flex;justify-content:space-between;align-items:center;padding:14px 18px;background:#fff;border-bottom:1px solid #eee}
+header h1{margin:0;font-size:20px;color:var(--accent);cursor:pointer}
+header .right{display:flex;gap:8px;align-items:center}
+input#searchInput{padding:8px;border:1px solid #ddd;border-radius:6px;width:220px}
+.btn{padding:8px 10px;border-radius:6px;border:none;background:#ddd;cursor:pointer}
+.btn.primary{background:var(--accent);color:#fff}
+.btn.danger{background:#e74c3c;color:#fff}
+main{padding:18px;max-width:1000px;margin:18px auto}
+h2{margin:8px 0 12px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}
+.card{background:var(--card);padding:12px;border-radius:8px;box-shadow:0 1px 4px rgba(0,0,0,0.04);border:1px solid #eee}
+.card h3{margin:0 0 6px}
+.card p{margin:6px 0;color:var(--muted);font-size:14px}
+.small{font-size:13px;color:var(--muted)}
+.hidden{display:none}
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,0.4);display:flex;align-items:center;justify-content:center;padding:20px}
+.cartPanel{width:100%;max-width:600px;background:#fff;border-radius:10px;padding:16px;box-shadow:0 6px 18px rgba(0,0,0,0.12)}
+.cartItem{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px dashed #eee}
+.qtyCtl{display:flex;gap:6px;align-items:center}
+.qtyCtl button{width:28px;height:28px;border-radius:6px}
+.toast{position:fixed;right:20px;bottom:20px;background:#111;color:#fff;padding:12px 16px;border-radius:8px}
+footer{padding:12px;text-align:center;color:var(--muted);font-size:13px;border-top:1px solid #eee;background:#fff;margin-top:24px}
+@media (max-width:600px){
+  header .right{flex-direction:column;align-items:flex-end;gap:6px}
+  input#searchInput{width:160px}
+}
+</style>
 </head>
 <body>
-    <nav class="navbar">
-        <div class="logo">SRU LMS</div>
-        <ul class="nav-links">
-            <li><a onclick="showPage('home')">Home</a></li>
-            <li><a onclick="showPage('courses')">Courses</a></li>
-            <li><a onclick="showPage('files')">My Files</a></li>
-            <li><a onclick="showPage('assignments')">Assignments</a></li>
-        </ul>
-    </nav>
+<header>
+  <h1>FoodFinder</h1>
+  <div class="right">
+    <input id="searchInput" placeholder="Search restaurants or cuisine..."/>
+    <button id="searchBtn" class="btn">Search</button>
+    <button id="viewCartBtn" class="btn">View Cart (<span id="cartCount">0</span>)</button>
+  </div>
+</header>
 
-    <div class="container">
-        <!-- Home Page -->
-        <div id="home" class="page active">
-            <div class="hero">
-                <h1>Welcome to SRU Learning Management System</h1>
-                <p>Empowering Education Through Technology</p>
-            </div>
+<main>
+  <section id="restaurantsSection">
+    <h2>Restaurants</h2>
+    <div id="restaurantsList" class="grid"></div>
+  </section>
 
-            <div class="dashboard">
-                <div class="card" onclick="showPage('courses')">
-                    <div class="card-icon">📚</div>
-                    <h3>My Courses</h3>
-                    <p>Access all your enrolled courses and continue learning at your own pace.</p>
-                </div>
+  <section id="menuSection" class="hidden">
+    <button id="backBtn" class="btn">← Back to Restaurants</button>
+    <h2 id="menuTitle">Menu</h2>
+    <div id="menuList" class="grid"></div>
+  </section>
 
-                <div class="card" onclick="showPage('files')">
-                    <div class="card-icon">📁</div>
-                    <h3>My Files</h3>
-                    <p>Upload, manage, and access your course materials and documents.</p>
-                </div>
-
-                <div class="card" onclick="showPage('assignments')">
-                    <div class="card-icon">📝</div>
-                    <h3>Assignments</h3>
-                    <p>Submit assignments and check deadlines for all your courses.</p>
-                </div>
-
-                <div class="card" onclick="alert('Discussion forum coming soon!')">
-                    <div class="card-icon">💬</div>
-                    <h3>Discussion</h3>
-                    <p>Engage with peers and instructors in course discussions.</p>
-                </div>
-            </div>
+  <section id="cartSection" class="overlay hidden">
+    <div class="cartPanel">
+      <h2>Your Cart</h2>
+      <div id="cartItems"></div>
+      <div class="cartFooter">
+        <div><b>Total: ₹<span id="cartTotal">0</span></b></div>
+        <div>
+          <button id="clearCartBtn" class="btn danger">Clear</button>
+          <button id="placeOrderBtn" class="btn primary">Place Order</button>
+          <button id="closeCartBtn" class="btn">Close</button>
         </div>
-
-        <!-- Courses Page -->
-        <div id="courses" class="page">
-            <h2 class="section-title">My Courses</h2>
-            <div class="course-grid">
-                <div class="course-card" onclick="openCourse('Web Development')">
-                    <div class="course-image">💻</div>
-                    <div class="course-content">
-                        <h3 class="course-title">Web Development Fundamentals</h3>
-                        <p>Learn HTML, CSS, and JavaScript from scratch</p>
-                        <div class="course-meta">
-                            <span>⏱️ 12 weeks</span>
-                            <span>👥 2,450 students</span>
-                        </div>
-                        <div class="progress-bar">
-                            <div class="progress-fill" style="width: 65%"></div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="course-card" onclick="openCourse('Data Science')">
-                    <div class="course-image">📊</div>
-                    <div class="course-content">
-                        <h3 class="course-title">Data Science Essentials</h3>
-                        <p>Master data analysis and visualization techniques</p>
-                        <div class="course-meta">
-                            <span>⏱️ 10 weeks</span>
-                            <span>👥 1,890 students</span>
-                        </div>
-                        <div class="progress-bar">
-                            <div class="progress-fill" style="width: 40%"></div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="course-card" onclick="openCourse('UI/UX Design')">
-                    <div class="course-image">🎨</div>
-                    <div class="course-content">
-                        <h3 class="course-title">UI/UX Design Principles</h3>
-                        <p>Create beautiful and user-friendly interfaces</p>
-                        <div class="course-meta">
-                            <span>⏱️ 8 weeks</span>
-                            <span>👥 3,120 students</span>
-                        </div>
-                        <div class="progress-bar">
-                            <div class="progress-fill" style="width: 80%"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Files Page -->
-        <div id="files" class="page">
-            <h2 class="section-title">My Files</h2>
-            
-            <div class="file-upload-section">
-                <h3 style="margin-bottom: 1rem; color: #333;">Upload Files</h3>
-                <div class="upload-area" id="uploadArea" onclick="document.getElementById('fileInput').click()">
-                    <div style="font-size: 3rem; margin-bottom: 1rem;">📤</div>
-                    <h3 style="color: #667eea; margin-bottom: 0.5rem;">Click to upload or drag and drop</h3>
-                    <p style="color: #666;">Support for documents, images, PDFs, and more</p>
-                </div>
-                <input type="file" id="fileInput" class="file-input" multiple>
-            </div>
-
-            <div class="file-upload-section">
-                <h3 style="margin-bottom: 1rem; color: #333;">Your Files</h3>
-                <div id="fileList" class="file-list">
-                    <p style="color: #666; text-align: center;">No files uploaded yet. Upload your first file above!</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Assignments Page -->
-        <div id="assignments" class="page">
-            <h2 class="section-title">Assignments</h2>
-            
-            <div class="file-upload-section">
-                <h3 style="margin-bottom: 1rem; color: #333;">Submit Assignment</h3>
-                <div class="upload-area" onclick="document.getElementById('assignmentInput').click()">
-                    <div style="font-size: 3rem; margin-bottom: 1rem;">📝</div>
-                    <h3 style="color: #667eea; margin-bottom: 0.5rem;">Upload your assignment</h3>
-                    <p style="color: #666;">Accepted formats: PDF, DOC, DOCX, TXT</p>
-                </div>
-                <input type="file" id="assignmentInput" class="file-input" accept=".pdf,.doc,.docx,.txt">
-            </div>
-
-            <div class="course-grid" style="margin-top: 2rem;">
-                <div class="card">
-                    <div class="card-icon">📝</div>
-                    <h3>Web Dev Assignment 1</h3>
-                    <p>Create a responsive landing page</p>
-                    <p style="color: #f56565; margin-top: 0.5rem; font-weight: 600;">Due: Oct 15, 2025</p>
-                    <button class="btn" style="margin-top: 1rem;" onclick="alert('Assignment submission would open here')">Submit</button>
-                </div>
-
-                <div class="card">
-                    <div class="card-icon">📊</div>
-                    <h3>Data Analysis Project</h3>
-                    <p>Analyze the provided dataset</p>
-                    <p style="color: #48bb78; margin-top: 0.5rem; font-weight: 600;">Due: Oct 20, 2025</p>
-                    <button class="btn" style="margin-top: 1rem;" onclick="alert('Assignment submission would open here')">Submit</button>
-                </div>
-            </div>
-        </div>
+      </div>
     </div>
+  </section>
 
-    <!-- File Viewer Modal -->
-    <div id="fileModal" class="modal">
-        <div class="modal-content">
-            <span class="close-modal" onclick="closeModal()">&times;</span>
-            <div id="modalContent"></div>
-        </div>
-    </div>
+  <section id="messageSection" class="toast hidden"></section>
+</main>
 
-    <script>
-        const uploadedFiles = [];
+<footer>
+  <small>Simple Zomato-like app • Works offline • Uses localStorage</small>
+</footer>
 
-        function showPage(pageId) {
-            document.querySelectorAll('.page').forEach(page => {
-                page.classList.remove('active');
-            });
-            document.getElementById(pageId).classList.add('active');
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-
-        function openCourse(courseName) {
-            alert(`Opening ${courseName} course. In a full LMS, this would show course materials, videos, and resources.`);
-        }
-
-        // File upload handling
-        const fileInput = document.getElementById('fileInput');
-        const uploadArea = document.getElementById('uploadArea');
-        const fileList = document.getElementById('fileList');
-
-        fileInput.addEventListener('change', handleFiles);
-
-        // Drag and drop
-        uploadArea.addEventListener('dragover', (e) => {
-            e.preventDefault();
-            uploadArea.classList.add('dragover');
-        });
-
-        uploadArea.addEventListener('dragleave', () => {
-            uploadArea.classList.remove('dragover');
-        });
-
-        uploadArea.addEventListener('drop', (e) => {
-            e.preventDefault();
-            uploadArea.classList.remove('dragover');
-            const files = e.dataTransfer.files;
-            handleFiles({ target: { files } });
-        });
-
-        function handleFiles(e) {
-            const files = Array.from(e.target.files);
-            files.forEach(file => {
-                uploadedFiles.push(file);
-                addFileToList(file);
-            });
-        }
-
-        function addFileToList(file) {
-            const fileIcon = getFileIcon(file.type);
-            const fileSize = formatFileSize(file.size);
-            
-            if (fileList.querySelector('p')) {
-                fileList.innerHTML = '';
-            }
-
-            const fileItem = document.createElement('div');
-            fileItem.className = 'file-item';
-            fileItem.innerHTML = `
-                <div class="file-info">
-                    <div class="file-icon">${fileIcon}</div>
-                    <div class="file-details">
-                        <div class="file-name">${file.name}</div>
-                        <div class="file-size">${fileSize} • ${new Date().toLocaleDateString()}</div>
-                    </div>
-                </div>
-                <div class="file-actions">
-                    <button class="btn btn-small btn-success" onclick="viewFile('${file.name}')">View</button>
-                    <button class="btn btn-small" onclick="downloadFile('${file.name}')">Download</button>
-                    <button class="btn btn-small btn-danger" onclick="deleteFile('${file.name}')">Delete</button>
-                </div>
-            `;
-            fileList.appendChild(fileItem);
-        }
-
-        function getFileIcon(type) {
-            if (type.includes('image')) return '🖼️';
-            if (type.includes('pdf')) return '📄';
-            if (type.includes('text')) return '📝';
-            if (type.includes('video')) return '🎥';
-            if (type.includes('audio')) return '🎵';
-            return '📁';
-        }
-
-        function formatFileSize(bytes) {
-            if (bytes === 0) return '0 Bytes';
-            const k = 1024;
-            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-            const i = Math.floor(Math.log(bytes) / Math.log(k));
-            return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
-        }
-
-        function viewFile(fileName) {
-            const file = uploadedFiles.find(f => f.name === fileName);
-            if (!file) return;
-
-            const modal = document.getElementById('fileModal');
-            const modalContent = document.getElementById('modalContent');
-            modal.classList.add('active');
-
-            if (file.type.includes('image')) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    modalContent.innerHTML = `
-                        <div class="viewer-header">
-                            <h3>${file.name}</h3>
-                        </div>
-                        <img src="${e.target.result}" alt="${file.name}">
-                    `;
-                };
-                reader.readAsDataURL(file);
-            } else if (file.type.includes('text')) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    modalContent.innerHTML = `
-                        <div class="viewer-header">
-                            <h3>${file.name}</h3>
-                        </div>
-                        <div class="viewer-content">${e.target.result}</div>
-                    `;
-                };
-                reader.readAsText(file);
-            } else {
-                modalContent.innerHTML = `
-                    <div class="viewer-header">
-                        <h3>${file.name}</h3>
-                    </div>
-                    <p style="text-align: center; padding: 2rem;">Preview not available for this file type. Click download to view the file.</p>
-                    <button class="btn" onclick="downloadFile('${fileName}')" style="display: block; margin: 0 auto;">Download File</button>
-                `;
-            }
-        }
-
-        function downloadFile(fileName) {
-            const file = uploadedFiles.find(f => f.name === fileName);
-            if (!file) return;
-
-            const url = URL.createObjectURL(file);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = file.name;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-        }
-
-        function deleteFile(fileName) {
-            if (confirm(`Are you sure you want to delete ${fileName}?`)) {
-                const index = uploadedFiles.findIndex(f => f.name === fileName);
-                if (index > -1) {
-                    uploadedFiles.splice(index, 1);
-                    renderFileList();
-                }
-            }
-        }
-
-        function renderFileList() {
-            fileList.innerHTML = '';
-            if (uploadedFiles.length === 0) {
-                fileList.innerHTML = '<p style="color: #666; text-align: center;">No files uploaded yet. Upload your first file above!</p>';
-            } else {
-                uploadedFiles.forEach(file => addFileToList(file));
-            }
-        }
-
-        function closeModal() {
-            document.getElementById('fileModal').classList.remove('active');
-        }
-
-        // Assignment file upload
-        document.getElementById('assignmentInput').addEventListener('change', (e) => {
-            const file = e.target.files[0];
-            if (file) {
-                alert(`Assignment "${file.name}" uploaded successfully! In a full LMS, this would be submitted to your instructor.`);
-            }
-        });
-
-        // Close modal when clicking outside
-        document.getElementById('fileModal').addEventListener('click', (e) => {
-            if (e.target.id === 'fileModal') {
-                closeModal();
-            }
-        });
-    </script>
+<script>
+const sampleDataKey='ff_sample_data_v1',cartKey='ff_cart_v1';
+const sampleRestaurants=[
+  {id:'r1',name:'Spice Villa',location:'Hyderabad',cuisine:['Indian','Chinese'],rating:4.2,menu:[
+    {id:'m1',name:'Butter Chicken',price:250,desc:'Creamy tomato gravy'},
+    {id:'m2',name:'Veg Biryani',price:150,desc:'Hyderabadi style'}]},
+  {id:'r2',name:'Green Bowl',location:'Bengaluru',cuisine:['Healthy','Salads'],rating:4.5,menu:[
+    {id:'m3',name:'Quinoa Salad',price:200,desc:'Fresh veggies & quinoa'},
+    {id:'m4',name:'Grilled Paneer',price:220,desc:'Smoky paneer'}]},
+  {id:'r3',name:'Pizza Planet',location:'Mumbai',cuisine:['Italian','Fast Food'],rating:4.0,menu:[
+    {id:'m5',name:'Margherita',price:180,desc:'Classic cheese pizza'},
+    {id:'m6',name:'Pepperoni',price:260,desc:'Spicy pepperoni'}]}
+];
+const $=s=>document.querySelector(s),$all=s=>Array.from(document.querySelectorAll(s));
+const showToast=(t,d=2000)=>{const m=$('#messageSection');m.textContent=t;m.classList.remove('hidden');setTimeout(()=>m.classList.add('hidden'),d)};
+function ensureSampleData(){if(!localStorage.getItem(sampleDataKey))localStorage.setItem(sampleDataKey,JSON.stringify(sampleRestaurants))}
+function readRestaurants(){ensureSampleData();return JSON.parse(localStorage.getItem(sampleDataKey)||'[]')}
+function saveRestaurants(a){localStorage.setItem(sampleDataKey,JSON.stringify(a))}
+function readCart(){return JSON.parse(localStorage.getItem(cartKey)||'[]')}
+function saveCart(c){localStorage.setItem(cartKey,JSON.stringify(c));updateCartCount()}
+function renderRestaurants(list){const d=$('#restaurantsList');d.innerHTML='';if(!list.length)return d.innerHTML='<div class="small">No restaurants found.</div>';list.forEach(r=>{const e=document.createElement('div');e.className='card';e.innerHTML=<h3>${r.name}</h3><p class="small">${r.location} • ${r.cuisine.join(', ')}</p><p class="small">Rating: ${r.rating}</p><div style="margin-top:8px"><button class="btn" data-rid="${r.id}">View Menu</button></div>;d.appendChild(e)});$all('[data-rid]').forEach(b=>b.onclick=()=>openMenu(b.dataset.rid))}
+function renderMenu(r){$('#menuTitle').textContent='Menu — '+r.name;const d=$('#menuList');d.innerHTML='';r.menu.forEach(i=>{const e=document.createElement('div');e.className='card';e.innerHTML=<h3>${i.name}</h3><p class="small">₹${i.price}</p><p class="small">${i.desc}</p><div style="margin-top:8px"><button class="btn" data-mid="${i.id}">Add to Cart</button></div>;d.appendChild(e)});$all('[data-mid]').forEach(b=>b.onclick=()=>{const it=r.menu.find(x=>x.id===b.dataset.mid);if(it)addToCart(it)})}
+function updateCartCount(){const c=readCart();$('#cartCount').textContent=c.reduce((s,i)=>s+i.qty,0)}
+function openMenu(id){const r=readRestaurants().find(x=>x.id===id);if(!r)return showToast('Restaurant not found');renderMenu(r);$('#restaurantsSection').classList.add('hidden');$('#menuSection').classList.remove('hidden')}
+function backToRestaurants(){$('#menuSection').classList.add('hidden');$('#restaurantsSection').classList.remove('hidden')}
+function addToCart(it){const c=readCart();const f=c.find(x=>x.menuId===it.id);if(f)f.qty+=1;else c.push({menuId:it.id,name:it.name,price:it.price,qty:1});saveCart(c);showToast('Added to cart')}
+function openCartPanel(){const c=readCart();const w=$('#cartItems');w.innerHTML='';if(!c.length)w.innerHTML='<div class="small">Cart is empty.</div>';c.forEach(ci=>{const l=document.createElement('div');l.className='cartItem';l.innerHTML=<div><b>${ci.name}</b><div class="small">₹${ci.price} each</div></div><div class="qtyCtl"><button class="btn" data-op="-1" data-id="${ci.menuId}">-</button><div>${ci.qty}</div><button class="btn" data-op="1" data-id="${ci.menuId}">+</button><button class="btn danger" data-remove="${ci.menuId}">Remove</button></div>;w.appendChild(l)});$all('[data-op]').forEach(b=>b.onclick=()=>{const id=b.dataset.id,op=Number(b.dataset.op);const c=readCart();const it=c.find(x=>x.menuId===id);if(!it)return;it.qty=Math.max(1,it.qty+op);saveCart(c);openCartPanel()});$all('[data-remove]').forEach(b=>b.onclick=()=>{let c=readCart().filter(x=>x.menuId!==b.dataset.remove);saveCart(c);openCartPanel()});$('#cartTotal').textContent=c.reduce((s,i)=>s+i.price*i.qty,0);$('#cartSection').classList.remove('hidden')}
+function closeCartPanel(){$('#cartSection').classList.add('hidden')}
+function clearCart(){localStorage.removeItem(cartKey);updateCartCount();openCartPanel();showToast('Cart cleared')}
+function placeOrder(){const c=readCart();if(!c.length)return showToast('Cart is empty');const k='ff_orders_v1',o=JSON.parse(localStorage.getItem(k)||'[]'),t=c.reduce((s,i)=>s+i.price*i.qty,0);const n={id:'o'+Date.now(),items:c,total:t,createdAt:new Date().toISOString()};o.unshift(n);localStorage.setItem(k,JSON.stringify(o));localStorage.removeItem(cartKey);updateCartCount();closeCartPanel();showToast('Order placed! ID: '+n.id)}
+function handleSearch(){const q=$('#searchInput').value.trim().toLowerCase(),a=readRestaurants();if(!q)return renderRestaurants(a);const f=a.filter(r=>r.name.toLowerCase().includes(q)||r.cuisine.some(c=>c.toLowerCase().includes(q)));renderRestaurants(f)}
+function quickAddRestaurant(){const name=prompt('Restaurant name');if(!name)return;const loc=prompt('Location')||'Unknown';const cui=(prompt('Cuisine (comma separated)')||'').split(',').map(x=>x.trim()).filter(Boolean);const list=readRestaurants();list.push({id:'r'+Date.now(),name,location:loc,cuisine:cui,rating:4.0,menu:[]});saveRestaurants(list);renderRestaurants(list);showToast('Restaurant added')}
+function init(){ensureSampleData();renderRestaurants(readRestaurants());updateCartCount();$('#searchBtn').onclick=handleSearch;$('#searchInput').onkeydown=e=>e.key==='Enter'&&handleSearch();$('#viewCartBtn').onclick=openCartPanel;$('#closeCartBtn').onclick=closeCartPanel;$('#clearCartBtn').onclick=()=>confirm('Clear cart?')&&clearCart();$('#placeOrderBtn').onclick=()=>confirm('Place order now?')&&placeOrder();$('#backBtn').onclick=backToRestaurants;document.querySelector('h1').ondblclick=quickAddRestaurant}
+init();
+</script>
 </body>
 </html>
